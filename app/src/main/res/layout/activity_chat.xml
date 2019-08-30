@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.ChatActivity">
+
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_chat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:elevation="@dimen/_1sdp"
+        app:contentInsetStartWithNavigation="0dp"
+        android:layout_alignParentTop="true"
+        app:navigationIcon="@drawable/ic_back"
+        app:title="@string/app_name"
+        app:titleTextAppearance="@style/toolbar_theme"
+        app:subtitleTextAppearance="@style/toolbar_theme_subtitle"
+        app:titleTextColor="@android:color/white" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:paddingBottom="@dimen/_2sdp"
+        android:id="@+id/rv_chat_messages"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/layout_send_messages"
+        android:layout_below="@id/toolbar_chat" />
+
+    <LinearLayout
+        android:id="@+id/layout_send_messages"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <EditText
+            android:id="@+id/et_message"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/_5sdp"
+            android:layout_weight="1"
+            android:background="@drawable/bg_message_box"
+            android:elevation="@dimen/_1sdp"
+            android:hint="@string/type_a_message"
+            android:maxLines="5"
+            android:paddingStart="@dimen/_10sdp"
+            android:paddingTop="@dimen/_6sdp"
+            android:paddingEnd="@dimen/_5sdp"
+            android:paddingBottom="@dimen/_6sdp"
+            android:textSize="@dimen/_14sdp" />
+
+        <ImageView
+            android:id="@+id/bt_send"
+            android:layout_width="@dimen/_35sdp"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/_3sdp"
+            android:background="@drawable/bg_circle_send"
+            android:elevation="@dimen/_1sdp"
+            android:padding="@dimen/_9sdp"
+            android:src="@drawable/ic_send"
+            app:cornerRadius="@dimen/_30sdp" />
+    </LinearLayout>
+
+</RelativeLayout>
