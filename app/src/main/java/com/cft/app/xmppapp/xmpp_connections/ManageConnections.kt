@@ -89,7 +89,7 @@ object ManageConnections {
 
             override fun presenceChanged(presence: Presence) {
                 Log.d("roster", "presence Changed")
-                onRosterChangeListener?.onRosterChange()
+                //onRosterChangeListener?.onRosterChange()
                 onPresenceChangeListener?.onPresenceChange(presence)
             }
 

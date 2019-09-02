@@ -10,6 +10,7 @@
         <item name="windowActionModeOverlay">true</item>
         <item name="actionModeBackground">@color/colorAccent</item>
         <item name="actionMenuTextColor">@android:color/white</item>
+        <item name="actionModeCloseDrawable">@drawable/ic_back</item>
     </style>
 
     <style name="toolbar_theme">
@@ -20,7 +21,5 @@
     <style name="toolbar_theme_subtitle">
         <item name="android:textSize">12sp</item>
     </style>
-
-
 
 </resources>

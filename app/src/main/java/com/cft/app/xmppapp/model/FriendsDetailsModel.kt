@@ -1,3 +1,3 @@
 package com.cft.app.xmppapp.model
 
-data class FriendsDetailsModel(var name:String,var jid:String,var type:String)
+data class FriendsDetailsModel(var name:String,var jid:String,var type:String,var clicked:Boolean)

@@ -11,7 +11,7 @@ object AppPreferences {
         sharedPreferencesEditor.apply()
     }
 
-    fun setUserData(context: Context,username:String,password:String){
+    fun setUserData(context: Context, username: String, password: String) {
         val sharedPreferencesEditor =
             context.getSharedPreferences(AppConstants.USER_PREFERENCE, Context.MODE_PRIVATE).edit()
         sharedPreferencesEditor.putString(AppConstants.USERNAME, username)
@@ -19,7 +19,26 @@ object AppPreferences {
         sharedPreferencesEditor.apply()
     }
 
+    fun saveSelectedFriends(context: Context, selectedFriends: ArrayList<String>?) {
+        val sharedPreferencesEditor =
+            context.getSharedPreferences(AppConstants.USER_PREFERENCE, Context.MODE_PRIVATE).edit()
+        if(selectedFriends == null)
+            sharedPreferencesEditor.putStringSet(AppConstants.SELECTED_FRIENDS, null)
+        else{
+            val hashSet = HashSet<String>(selectedFriends)
+            sharedPreferencesEditor.putStringSet(AppConstants.SELECTED_FRIENDS, hashSet)
+        }
 
+        sharedPreferencesEditor.apply()
+    }
+
+    fun getSelectedFriends(context: Context): MutableSet<String> = context.getSharedPreferences(
+        AppConstants.USER_PREFERENCE,
+        Context.MODE_PRIVATE
+    ).getStringSet(
+        AppConstants.SELECTED_FRIENDS,
+        null
+    )!!
 
     fun getLogInStatus(context: Context) =
         context.getSharedPreferences(AppConstants.USER_PREFERENCE, Context.MODE_PRIVATE).getBoolean(

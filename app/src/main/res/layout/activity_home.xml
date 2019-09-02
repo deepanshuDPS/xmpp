@@ -5,11 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/white"
+    android:fitsSystemWindows="true"
     tools:context=".activity.HomeActivity">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
         android:gravity="top">
 
         <androidx.appcompat.widget.Toolbar
@@ -23,7 +26,7 @@
             android:id="@+id/tab_layout_chat"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
+            android:background="@android:color/transparent"
             android:overScrollMode="never"
             app:tabIndicatorColor="@android:color/white"
             app:tabIndicatorFullWidth="true"

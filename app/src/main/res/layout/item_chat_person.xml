@@ -3,67 +3,72 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@android:color/white"
+    android:id="@+id/layout_friend"
     android:orientation="vertical">
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal">
-    <FrameLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/cv_background"
-            android:layout_width="@dimen/_30sdp"
-            android:layout_height="@dimen/_30sdp"
-            android:layout_margin="@dimen/_8sdp"
-            android:src="@color/colorAccent" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/tv_first_char"
+        <FrameLayout
             android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/cv_background"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_margin="@dimen/_8sdp"
+                android:src="@color/colorAccent" />
+
+            <TextView
+                android:id="@+id/tv_first_char"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingBottom="@dimen/_1sdp"
+                android:text="D"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/_18sdp"
+                android:textStyle="bold" />
+        </FrameLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="D"
-            android:textStyle="bold"
-            android:paddingBottom="@dimen/_1sdp"
-            android:textColor="@android:color/white"
-            android:textSize="@dimen/_18sdp" />
-    </FrameLayout>
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:layout_gravity="center"
-        android:gravity="center|start"
-        android:orientation="vertical">
+            android:layout_weight="1"
+            android:gravity="center|start"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tv_name"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Deepanshu"
-            android:textSize="@dimen/_12sdp"
-            android:textStyle="bold"
-            android:textColor="@android:color/black"/>
+            <TextView
+                android:id="@+id/tv_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:text="Deepanshu"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_12sdp"
+                android:textStyle="bold" />
 
 
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/ib_chat"
+            android:layout_width="@dimen/_25sdp"
+            android:layout_height="@dimen/_25sdp"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/_8sdp"
+            android:background="@drawable/ic_chat" />
     </LinearLayout>
 
-    <ImageButton
-        android:id="@+id/ib_chat"
-        android:layout_gravity="center"
-        android:layout_width="@dimen/_25sdp"
-        android:layout_height="@dimen/_25sdp"
-        android:layout_margin="@dimen/_8sdp"
-        android:background="@drawable/ic_chat"/>
-</LinearLayout>
     <View
         android:layout_width="match_parent"
         android:layout_height="@dimen/_1sdp"
         android:layout_marginStart="@dimen/_10sdp"
         android:layout_marginEnd="@dimen/_10sdp"
-        android:background="@color/grey"/>
+        android:background="@color/grey" />
 </LinearLayout>

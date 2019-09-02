@@ -1,12 +1,14 @@
 package com.cft.app.xmppapp.adapter
 
 import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.res.ResourcesCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.cft.app.xmppapp.R
-import com.cft.app.xmppapp.listener.OnMyClickListener
+import com.cft.app.xmppapp.listener.OnAllClickListener
 import com.cft.app.xmppapp.model.FriendsDetailsModel
 import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_chat_person.*
@@ -14,7 +16,7 @@ import kotlinx.android.synthetic.main.item_chat_person.*
 class FriendsListAdapter(
     private var context: Context,
     private var friendsList: ArrayList<FriendsDetailsModel>,
-    private var onMyClickListener: OnMyClickListener
+    private var onAllClickListener: OnAllClickListener
 ) : RecyclerView.Adapter<FriendsListAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -29,13 +31,57 @@ class FriendsListAdapter(
         val details = friendsList[position]
         holder.tv_name.text = details.name
         holder.tv_first_char.text = details.name[0].toString()
-        if(details.type == "both")
+        if (!details.clicked)
+            holder.layout_friend.setBackgroundColor(Color.parseColor("#ffffff"))
+        else
+            holder.layout_friend.setBackgroundColor(
+                ResourcesCompat.getColor(
+                    context.resources,
+                    R.color.grey,
+                    null
+                )
+            )
+
+        if (details.type == "both")
             holder.cv_background.setImageResource(R.color.color_to)
         else
             holder.cv_background.setImageResource(R.color.color_from)
 
         holder.ib_chat.setOnClickListener {
-            onMyClickListener.onMyClick(position)
+            onAllClickListener.onClick(position)
+        }
+
+        fun checkLayoutStatus() {
+
+            if (details.clicked) {
+                holder.layout_friend.setBackgroundColor(Color.parseColor("#ffffff"))
+                details.clicked = false
+            } else {
+                holder.layout_friend.setBackgroundColor(
+                    ResourcesCompat.getColor(
+                        context.resources,
+                        R.color.grey,
+                        null
+                    )
+                )
+                details.clicked = true
+            }
+        }
+
+        holder.containerView.setOnClickListener {
+            for (i in friendsList) {
+                if (i.clicked) {
+                    checkLayoutStatus()
+                    break
+                }
+            }
+            onAllClickListener.onItemClick(position)
+        }
+
+        holder.containerView.setOnLongClickListener {
+            checkLayoutStatus()
+            onAllClickListener.onItemLongClick(position)
+            return@setOnLongClickListener true
         }
     }
 

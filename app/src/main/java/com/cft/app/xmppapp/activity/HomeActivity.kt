@@ -1,5 +1,6 @@
 package com.cft.app.xmppapp.activity
 
+import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
@@ -8,11 +9,15 @@ import android.view.MenuItem
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.view.ActionMode
+import androidx.core.content.res.ResourcesCompat
 import com.cft.app.xmppapp.R
 import com.cft.app.xmppapp.adapter.ChatsViewPagerAdapter
 import com.cft.app.xmppapp.app_helper.AppConstants
+import com.cft.app.xmppapp.app_helper.AppPreferences
 import com.cft.app.xmppapp.app_helper.Utilities
+import com.cft.app.xmppapp.fragment.FriendsListFragment
 import com.cft.app.xmppapp.listener.FriendRequestListener
+import com.cft.app.xmppapp.listener.OnFriendSelectionListener
 import com.cft.app.xmppapp.xmpp_connections.ManageConnections
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.android.synthetic.main.activity_home.*
@@ -21,28 +26,24 @@ import org.jxmpp.jid.Jid
 import org.jxmpp.jid.impl.JidCreate
 
 
-
-
-
-
 class HomeActivity : BaseActivity() {
 
-   /* private var onIncomingMessageListener = object :IncomingMessageListener{
-        override fun onIncomingMessage(message:Message,from: Jid) {
-            runOnUiThread {
-                displayToast("${message.body} from ${Utilities.getNameFromJid(from)}")
-                Log.d("info message",message.toXML("urn:xmpp:delay").toString())
-            }
-        }
+    /* private var onIncomingMessageListener = object :IncomingMessageListener{
+         override fun onIncomingMessage(message:Message,from: Jid) {
+             runOnUiThread {
+                 displayToast("${message.body} from ${Utilities.getNameFromJid(from)}")
+                 Log.d("info message",message.toXML("urn:xmpp:delay").toString())
+             }
+         }
 
-    }*/
+     }*/
 
 
     /*
     <delay xmlns='urn:xmpp:delay' stamp='2019-08-28T06:48:53.808+00:00' from='192.168.1.12'>Offline storage</delay>
     */
 
-    var actionMode:ActionMode?=null
+    var actionMode: ActionMode? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,13 +52,12 @@ class HomeActivity : BaseActivity() {
         val tabList = ArrayList<String>()
         tabList.add("Chats")
         tabList.add("Friends")
-        view_pager.adapter = ChatsViewPagerAdapter(supportFragmentManager, tabList)
+        view_pager.adapter =
+            ChatsViewPagerAdapter(supportFragmentManager, tabList, onFriendSelectionListener)
 
         tab_layout_chat.setupWithViewPager(view_pager)
 
         fab_add_friend.setOnClickListener {
-
-            //actionMode = this@HomeActivity.startSupportActionMode(ActionBarCallback())
 
             showSendRequestDialog()
         }
@@ -149,14 +149,26 @@ class HomeActivity : BaseActivity() {
 
     }
 
-    class ActionBarCallback : ActionMode.Callback {
-        override fun onActionItemClicked(mode: ActionMode?, item: MenuItem?): Boolean {
+    inner class ActionBarCallback : ActionMode.Callback {
+        override fun onActionItemClicked(mode: ActionMode?, item: MenuItem): Boolean {
 
+            if (item.itemId == R.id.new_group) {
+                // create group dialog
+                //AppPreferences.getSelectedFriends(baseContext)
+            }
             return true
         }
 
         override fun onCreateActionMode(mode: ActionMode?, menu: Menu?): Boolean {
             mode?.menuInflater?.inflate(R.menu.menu_create_group, menu)
+
+            app_bar_layout.setBackgroundColor(
+                ResourcesCompat.getColor(
+                    resources,
+                    R.color.colorAccent,
+                    null
+                )
+            )
             return true
         }
 
@@ -167,11 +179,36 @@ class HomeActivity : BaseActivity() {
 
         override fun onDestroyActionMode(mode: ActionMode?) {
             mode?.finish()
+            FriendsListFragment.clearList()
+            app_bar_layout.setBackgroundColor(
+                ResourcesCompat.getColor(
+                    resources,
+                    R.color.colorPrimary,
+                    null
+                )
+            )
         }
 
 
     }
 
+    private val onFriendSelectionListener = object : OnFriendSelectionListener {
+
+        @SuppressLint("RestrictedApi")
+        override fun onFriendsSelected(friendsJidList: ArrayList<String>) {
+
+            AppPreferences.saveSelectedFriends(baseContext, friendsJidList)
+            if (friendsJidList.size != 0 && actionMode == null)
+                actionMode = this@HomeActivity.startSupportActionMode(ActionBarCallback())
+            else if (friendsJidList.size == 0) {
+                actionMode?.finish()
+                actionMode = null
+                AppPreferences.saveSelectedFriends(baseContext, null)
+            }
+
+        }
+
+    }
 
 }
 
