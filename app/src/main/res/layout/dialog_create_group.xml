@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="@dimen/_250sdp"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    tools:ignore="RtlSymmetry">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/black"
+        android:layout_margin="@dimen/_10sdp"
+        android:textSize="@dimen/_14sdp"
+        android:text="@string/create_group"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/ti_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:layout_gravity="center"
+        app:boxBackgroundMode="outline"
+        app:boxCornerRadiusBottomEnd="@dimen/_7sdp"
+        app:boxCornerRadiusBottomStart="@dimen/_7sdp"
+        app:boxCornerRadiusTopEnd="@dimen/_7sdp"
+        app:boxCornerRadiusTopStart="@dimen/_7sdp">
+
+        <EditText
+            android:id="@+id/et_group_name"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_35sdp"
+            android:textSize="@dimen/_16sdp"
+            android:hint="@string/group_name"
+            android:paddingStart="@dimen/_10sdp"
+            android:inputType="text" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_selected_users"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_gravity="end"
+        android:layout_margin="@dimen/_5sdp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/bt_create"
+            android:layout_width="wrap_content"
+            android:padding="@dimen/_2sdp"
+            android:text="@string/create"
+            app:cornerRadius="@dimen/_10sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginEnd="@dimen/_5sdp"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/bt_cancel"
+            android:layout_width="wrap_content"
+            android:padding="@dimen/_2sdp"
+            android:text="@string/cancel"
+            app:cornerRadius="@dimen/_10sdp"
+            android:layout_height="@dimen/_30sdp"/>
+    </LinearLayout>
+
+</LinearLayout>

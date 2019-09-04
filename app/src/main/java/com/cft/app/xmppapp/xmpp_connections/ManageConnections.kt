@@ -9,21 +9,22 @@ import org.jivesoftware.smack.bosh.XMPPBOSHConnection
 import org.jivesoftware.smack.chat2.ChatManager
 import org.jivesoftware.smack.packet.Presence
 import org.jivesoftware.smack.roster.*
-import org.jivesoftware.smackx.muc.MultiUserChat
 import org.jivesoftware.smackx.muc.MultiUserChatManager
 import org.jxmpp.jid.DomainBareJid
 import org.jxmpp.jid.Jid
 import org.jxmpp.jid.impl.JidCreate
 import org.jxmpp.stringprep.XmppStringprepException
-import org.jxmpp.jid.EntityBareJid
 import com.cft.app.xmppapp.listener.IncomingMessageListener
+import org.jivesoftware.smack.packet.Message
 import org.jxmpp.jid.parts.Resourcepart
 import org.jxmpp.jid.util.JidUtil
+import org.jivesoftware.smackx.muc.packet.GroupChatInvitation
+import org.jxmpp.jid.BareJid
 
 
 object ManageConnections {
 
-    var mucManager: MultiUserChatManager?=null
+    var mucManager: MultiUserChatManager? = null
     var boshConfiguration: BOSHConfiguration? = null
     var xMPPConnection: XMPPBOSHConnection? = null
     var isConnected = false
@@ -32,7 +33,7 @@ object ManageConnections {
     var friendRequestListener: FriendRequestListener? = null
     var onRosterChangeListener: RosterChangeListener? = null
     var onIncomingMessageListeners = LinkedHashMap<String, IncomingMessageListener>()
-    var onPresenceChangeListener:PresenceChangeListener?=null
+    var onPresenceChangeListener: PresenceChangeListener? = null
 
     fun setConnection(
         username: String,
@@ -62,9 +63,8 @@ object ManageConnections {
                     if (xMPPConnection!!.isAuthenticated) {
                         isConnected = true
                         xMPPConnectionListener.onConnected("Connected")
-                        setRoster()
+                        setRosterAndMucManager()
                         setChatMessenger()
-                        setMultiUserChatManager()
                     }
                 } catch (e: Exception) {
                     isConnected = false
@@ -77,9 +77,9 @@ object ManageConnections {
 
     }
 
-    private fun setRoster() {
+    private fun setRosterAndMucManager() {
         roster = Roster.getInstanceFor(xMPPConnection)
-
+        mucManager = MultiUserChatManager.getInstanceFor(xMPPConnection)
         //roster?.subscriptionMode = Roster.SubscriptionMode.accept_all
         roster?.addRosterListener(object : RosterListener {
             override fun entriesDeleted(addresses: MutableCollection<Jid>) {
@@ -125,22 +125,27 @@ object ManageConnections {
                 onIncomingMessageListeners["home_activity"]?.onIncomingMessage(message!!, from!!)
             else if (onIncomingMessageListeners.size == 2) {
                 onIncomingMessageListeners["chat_activity"]?.onIncomingMessage(message!!, from!!)
-                onIncomingMessageListeners["home_activity"]?.onIncomingMessage(message!!,from!!)
+                onIncomingMessageListeners["home_activity"]?.onIncomingMessage(message!!, from!!)
             }
         }
     }
 
-    private fun setMultiUserChatManager(){
+    fun createGroup(groupName: String, participants: MutableSet<String>) {
 
-        mucManager = MultiUserChatManager.getInstanceFor(xMPPConnection)
-    }
-
-    fun createGroup(jid:String,nickName:String){
-
-        val mucJid = JidCreate.entityBareFrom(jid)
-        val nickname = Resourcepart.from(nickName)
+        /*val mucJid = JidCreate.entityBareFrom(groupName + AppConstants.GROUP_CHAT_QUERY)
+        val nickname = Resourcepart.from(groupName)
         val muc = mucManager?.getMultiUserChat(mucJid)
-        muc?.create(nickname)?.makeInstant()
+        muc?.create(nickname)
+        val form = muc?.configurationForm?.createAnswerForm()
+        //form?.setAnswer("muc#roomconfig_roomowners", ArrayList<String>(participants))
+        muc?.sendConfigurationForm(form)
+        roster?.createGroup(mucJid.toString())
+
+        for (i in participants) {
+            val message = Message(JidCreate.bareFrom(i))
+            message.addExtension(GroupChatInvitation(mucJid.toString()))
+            xMPPConnection?.sendStanza(message)
+        }*/
 
     }
 
@@ -153,5 +158,4 @@ object ManageConnections {
         }
         return serviceName
     }
-
 }

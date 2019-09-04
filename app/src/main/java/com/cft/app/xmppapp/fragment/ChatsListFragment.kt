@@ -69,6 +69,7 @@ class ChatsListFragment : Fragment() {
     private fun createChatListFromRoster() {
         val mamManager = MamManager.getInstanceFor(ManageConnections.xMPPConnection)
         val entries = ManageConnections.roster?.entries!!
+       // val groupEntries = ManageConnections.roster?.groups!!
         for (entry in entries) {
             if (entry.type.name != "none") {
                 val chat = mamManager.queryMostRecentPage(entry.jid, 1).messages
@@ -84,6 +85,15 @@ class ChatsListFragment : Fragment() {
             }
 
         }
+        /*for(groupEntry in groupEntries){
+            chatsList.add(
+                ChatListModel(
+                    Utilities.getNameFromJid(groupEntry.name),
+                    groupEntry.name.toString(),
+                    ""
+                )
+            )
+        }*/
         chatListAdapter?.notifyDataSetChanged()
     }
 

@@ -19,4 +19,7 @@
     <string name="log_out">Log Out</string>
     <string name="type_a_message">Type a message</string>
     <string name="new_group">NEW GROUP</string>
+    <string name="create_group">Create Group</string>
+    <string name="group_name">Group Name</string>
+    <string name="create">Create</string>
 </resources>

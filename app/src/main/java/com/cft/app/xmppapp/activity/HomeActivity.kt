@@ -10,14 +10,18 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.view.ActionMode
 import androidx.core.content.res.ResourcesCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.cft.app.xmppapp.R
 import com.cft.app.xmppapp.adapter.ChatsViewPagerAdapter
+import com.cft.app.xmppapp.adapter.SelectedUsersAdapter
 import com.cft.app.xmppapp.app_helper.AppConstants
 import com.cft.app.xmppapp.app_helper.AppPreferences
 import com.cft.app.xmppapp.app_helper.Utilities
 import com.cft.app.xmppapp.fragment.FriendsListFragment
 import com.cft.app.xmppapp.listener.FriendRequestListener
 import com.cft.app.xmppapp.listener.OnFriendSelectionListener
+import com.cft.app.xmppapp.listener.OnMyClickListener
 import com.cft.app.xmppapp.xmpp_connections.ManageConnections
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.android.synthetic.main.activity_home.*
@@ -154,7 +158,7 @@ class HomeActivity : BaseActivity() {
 
             if (item.itemId == R.id.new_group) {
                 // create group dialog
-                //AppPreferences.getSelectedFriends(baseContext)
+                createGroupDialog()
             }
             return true
         }
@@ -179,17 +183,61 @@ class HomeActivity : BaseActivity() {
 
         override fun onDestroyActionMode(mode: ActionMode?) {
             mode?.finish()
-            FriendsListFragment.clearList()
-            app_bar_layout.setBackgroundColor(
-                ResourcesCompat.getColor(
-                    resources,
-                    R.color.colorPrimary,
-                    null
-                )
-            )
+            clearActionMode()
         }
 
 
+    }
+
+    private fun clearActionMode() {
+        actionMode?.finish()
+        actionMode = null
+        AppPreferences.saveSelectedFriends(baseContext, null)
+        FriendsListFragment.clearList()
+        app_bar_layout.setBackgroundColor(
+            ResourcesCompat.getColor(
+                resources,
+                R.color.colorPrimary,
+                null
+            )
+        )
+    }
+
+    private fun createGroupDialog() {
+        val dialog = Dialog(this@HomeActivity)
+        dialog.setContentView(R.layout.dialog_create_group)
+        dialog.setCancelable(false)
+        dialog.window!!.setBackgroundDrawableResource(android.R.color.transparent)
+
+        dialog.findViewById<Button>(R.id.bt_create).setOnClickListener {
+            val groupNameLayout = dialog.findViewById<TextInputLayout>(R.id.ti_name)
+            val groupName = getTextFromEditText(dialog.findViewById(R.id.et_group_name))
+            if (groupName.isNotEmpty()) {
+//                ManageConnections.createGroup(groupName,AppPreferences.getSelectedFriends(baseContext))
+                groupNameLayout.isErrorEnabled = false
+                clearActionMode()
+                dialog.dismiss()
+            } else groupNameLayout.error = "Please Enter Group Name"
+        }
+        dialog.findViewById<Button>(R.id.bt_cancel).setOnClickListener {
+            dialog.dismiss()
+            clearActionMode()
+        }
+
+        val rvSelectedUsers = dialog.findViewById<RecyclerView>(R.id.rv_selected_users)
+        rvSelectedUsers.layoutManager = LinearLayoutManager(this)
+        val list = ArrayList<String>()
+        for(i in AppPreferences.getSelectedFriends(baseContext))
+            list.add(i)
+        val adapter = SelectedUsersAdapter(baseContext,list,object :OnMyClickListener{
+            override fun onMyClick(position: Int) {
+                dialog.dismiss()
+                clearActionMode()
+            }
+
+        })
+        rvSelectedUsers.adapter = adapter
+        dialog.show()
     }
 
     private val onFriendSelectionListener = object : OnFriendSelectionListener {
