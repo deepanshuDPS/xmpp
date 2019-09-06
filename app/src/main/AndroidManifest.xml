@@ -4,8 +4,11 @@
     package="com.cft.app.xmppapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
+        android:name=".application.Application"
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -13,9 +16,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".activity.ChatActivity"
-            android:launchMode="singleInstance"
-            android:configChanges="orientation|navigation|locale"/>
+        <activity android:name=".activity.GalleryActivity"/>
+        <activity
+            android:name=".activity.ChatActivity"
+            android:configChanges="orientation|navigation|locale" />
         <activity android:name=".activity.HomeActivity" />
         <activity android:name=".activity.LogInActivity">
             <intent-filter>

@@ -1,26 +1,32 @@
 package com.cft.app.xmppapp.activity
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
-import com.cft.app.xmppapp.R
-import com.cft.app.xmppapp.app_helper.Utilities
-import com.cft.app.xmppapp.listener.IncomingMessageListener
-import com.cft.app.xmppapp.xmpp_connections.ManageConnections
-import kotlinx.android.synthetic.main.activity_chat.*
-import org.jivesoftware.smack.packet.Message
-import org.jxmpp.jid.Jid
-import org.jxmpp.jid.impl.JidCreate
+import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.cft.app.xmppapp.R
 import com.cft.app.xmppapp.adapter.ChatAdapter
+import com.cft.app.xmppapp.app_helper.AppConstants.REQUEST_CODE_GALLERY
 import com.cft.app.xmppapp.app_helper.AppPreferences
+import com.cft.app.xmppapp.app_helper.Utilities
+import com.cft.app.xmppapp.listener.IncomingMessageListener
 import com.cft.app.xmppapp.listener.PresenceChangeListener
 import com.cft.app.xmppapp.model.ChatsModel
+import com.cft.app.xmppapp.xmpp_connections.ManageConnections
+import hani.momanii.supernova_emoji_library.Actions.EmojIconActions
+import kotlinx.android.synthetic.main.activity_chat.*
+import org.jivesoftware.smack.packet.Message
 import org.jivesoftware.smack.packet.Presence
 import org.jivesoftware.smackx.iqlast.LastActivityManager
 import org.jivesoftware.smackx.mam.MamManager
-import java.lang.Exception
-import kotlin.collections.ArrayList
+import org.jxmpp.jid.Jid
+import org.jxmpp.jid.impl.JidCreate
+import java.io.File
 
 
 class ChatActivity : BaseActivity() {
@@ -32,6 +38,7 @@ class ChatActivity : BaseActivity() {
     private var messagesList = ArrayList<ChatsModel>()
     private var recentChatMessages = 15
     private var allMessagesFetched = false
+    private var eMoJiIconsActions:EmojIconActions?=null
 
     private var onChatIncomingMessageListener = object : IncomingMessageListener {
         override fun onIncomingMessage(message: Message, from: Jid) {
@@ -77,6 +84,40 @@ class ChatActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
+        eMoJiIconsActions = EmojIconActions(this,layout_chat,et_message,iv_emoji,"#2A9900","#E1FFC5","#F6FFF6")
+        eMoJiIconsActions?.setIconsIds(R.drawable.ic_keyboard,R.drawable.ic_smile_emoji)
+        eMoJiIconsActions?.ShowEmojIcon()
+
+        iv_attach.setOnClickListener{
+            if(layout_attachments_type.visibility == View.VISIBLE)
+                layout_attachments_type.visibility = View.GONE
+            else
+                layout_attachments_type.visibility = View.VISIBLE
+        }
+
+        layout_gallery.setOnClickListener{
+            startActivityForResult(Intent(this@ChatActivity,GalleryActivity::class.java),REQUEST_CODE_GALLERY)
+            layout_attachments_type.visibility = View.GONE
+        }
+        et_message.setEmojiconSize(resources.getDimension(R.dimen._16sdp).toInt())
+        et_message.addTextChangedListener(object :TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+                if(et_message.text.toString().trim().isNotEmpty())
+                    bt_send.visibility = View.VISIBLE
+                else
+                    bt_send.visibility = View.GONE
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+
+        })
+        et_message.setUseSystemDefault(true)
         mamManager = MamManager.getInstanceFor(ManageConnections.xMPPConnection)
         jidString = intent.extras?.getString("jid")
         jid = JidCreate.bareFrom(jidString)
@@ -202,5 +243,21 @@ class ChatActivity : BaseActivity() {
             }
         } catch (e: Exception) {
         }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(data!=null && resultCode== Activity.RESULT_OK && requestCode == REQUEST_CODE_GALLERY){
+            // not working
+            ManageConnections.sendFileTo(File(data.getStringExtra("file_path")),jidString)
+        }
+    }
+
+    override fun onBackPressed() {
+
+        if(layout_attachments_type.visibility == View.VISIBLE)
+            layout_attachments_type.visibility = View.GONE
+        else
+            super.onBackPressed()
     }
 }

@@ -23,6 +23,7 @@ import com.cft.app.xmppapp.listener.FriendRequestListener
 import com.cft.app.xmppapp.listener.OnFriendSelectionListener
 import com.cft.app.xmppapp.listener.OnMyClickListener
 import com.cft.app.xmppapp.xmpp_connections.ManageConnections
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.android.synthetic.main.activity_home.*
 import org.jivesoftware.smack.roster.RosterEntry
@@ -31,17 +32,6 @@ import org.jxmpp.jid.impl.JidCreate
 
 
 class HomeActivity : BaseActivity() {
-
-    /* private var onIncomingMessageListener = object :IncomingMessageListener{
-         override fun onIncomingMessage(message:Message,from: Jid) {
-             runOnUiThread {
-                 displayToast("${message.body} from ${Utilities.getNameFromJid(from)}")
-                 Log.d("info message",message.toXML("urn:xmpp:delay").toString())
-             }
-         }
-
-     }*/
-
 
     /*
     <delay xmlns='urn:xmpp:delay' stamp='2019-08-28T06:48:53.808+00:00' from='192.168.1.12'>Offline storage</delay>
@@ -60,6 +50,21 @@ class HomeActivity : BaseActivity() {
             ChatsViewPagerAdapter(supportFragmentManager, tabList, onFriendSelectionListener)
 
         tab_layout_chat.setupWithViewPager(view_pager)
+
+        tab_layout_chat.addOnTabSelectedListener(object :TabLayout.OnTabSelectedListener{
+            override fun onTabReselected(p0: TabLayout.Tab?) {
+
+            }
+
+            override fun onTabUnselected(p0: TabLayout.Tab?) {
+
+            }
+
+            override fun onTabSelected(p0: TabLayout.Tab?) {
+                clearActionMode()
+            }
+
+        })
 
         fab_add_friend.setOnClickListener {
 

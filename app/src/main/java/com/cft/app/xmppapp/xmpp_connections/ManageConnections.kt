@@ -15,15 +15,17 @@ import org.jxmpp.jid.Jid
 import org.jxmpp.jid.impl.JidCreate
 import org.jxmpp.stringprep.XmppStringprepException
 import com.cft.app.xmppapp.listener.IncomingMessageListener
-import org.jivesoftware.smack.packet.Message
-import org.jxmpp.jid.parts.Resourcepart
-import org.jxmpp.jid.util.JidUtil
-import org.jivesoftware.smackx.muc.packet.GroupChatInvitation
-import org.jxmpp.jid.BareJid
+import org.jivesoftware.smack.ConnectionListener
+import org.jivesoftware.smack.XMPPConnection
+import org.jivesoftware.smackx.filetransfer.FileTransfer
+import java.io.File
+import org.jivesoftware.smackx.filetransfer.FileTransferManager
+import java.lang.Thread.sleep
 
 
 object ManageConnections {
 
+    private var fileTransferManager: FileTransferManager?=null
     var mucManager: MultiUserChatManager? = null
     var boshConfiguration: BOSHConfiguration? = null
     var xMPPConnection: XMPPBOSHConnection? = null
@@ -55,14 +57,15 @@ object ManageConnections {
                 xMPPConnection = XMPPBOSHConnection(boshConfiguration)
                 try {
 
-                    xMPPConnection!!.connect()
+                    xMPPConnection?.connect()
                     if (xMPPConnection!!.isConnected) {
-                        xMPPConnection!!.login()
+                        xMPPConnection?.login()
                     }
 
                     if (xMPPConnection!!.isAuthenticated) {
                         isConnected = true
                         xMPPConnectionListener.onConnected("Connected")
+                        setConnectionListener()
                         setRosterAndMucManager()
                         setChatMessenger()
                     }
@@ -75,6 +78,30 @@ object ManageConnections {
 
         connectionThread.start()
 
+    }
+
+    private fun setConnectionListener() {
+        xMPPConnection?.addConnectionListener(object :ConnectionListener{
+            override fun connected(connection: XMPPConnection?) {
+
+            }
+
+            override fun connectionClosed() {
+
+            }
+
+            override fun connectionClosedOnError(e: java.lang.Exception?) {
+
+            }
+
+            override fun authenticated(
+                connection: XMPPConnection?,
+                resumed: Boolean
+            ) {
+
+            }
+
+        })
     }
 
     private fun setRosterAndMucManager() {
@@ -119,7 +146,7 @@ object ManageConnections {
 
         chatManager = ChatManager.getInstanceFor(xMPPConnection)
 
-        chatManager?.addIncomingListener { from, message, chat ->
+        chatManager?.addIncomingListener { from, message, _ ->
 
             if (onIncomingMessageListeners.size == 1)
                 onIncomingMessageListeners["home_activity"]?.onIncomingMessage(message!!, from!!)
@@ -128,11 +155,31 @@ object ManageConnections {
                 onIncomingMessageListeners["home_activity"]?.onIncomingMessage(message!!, from!!)
             }
         }
+        fileTransferManager = FileTransferManager.getInstanceFor(xMPPConnection)
+
+        // not working
+        fileTransferManager?.addFileTransferListener {
+
+            val transfer = it.accept()
+            try
+            {
+                while(!transfer.isDone)
+                {
+                    sleep(100)
+                    Log.d("filedd", transfer.status.toString())
+                }
+            }
+            catch(e:Exception)
+            {
+            }
+        }
+
+
     }
 
-    fun createGroup(groupName: String, participants: MutableSet<String>) {
+    /*fun createGroup(groupName: String, participants: MutableSet<String>) {
 
-        /*val mucJid = JidCreate.entityBareFrom(groupName + AppConstants.GROUP_CHAT_QUERY)
+        *//*val mucJid = JidCreate.entityBareFrom(groupName + AppConstants.GROUP_CHAT_QUERY)
         val nickname = Resourcepart.from(groupName)
         val muc = mucManager?.getMultiUserChat(mucJid)
         muc?.create(nickname)
@@ -145,8 +192,37 @@ object ManageConnections {
             val message = Message(JidCreate.bareFrom(i))
             message.addExtension(GroupChatInvitation(mucJid.toString()))
             xMPPConnection?.sendStanza(message)
-        }*/
+        }*//*
 
+    }*/
+
+    // not working
+    fun sendFileTo(file: File, jid: String?) {
+        val manager = FileTransferManager.getInstanceFor(xMPPConnection)
+
+        try {
+            //JidCreate.entityFullFrom(JidCreate.entityBareFrom(jid))
+            val transfer = manager.createOutgoingFileTransfer(JidCreate.entityFullFrom(jid + "/Smack"))
+
+            Thread{
+                transfer.sendFile(file, "")
+                while (!transfer.isDone) {
+                    if (transfer.status == FileTransfer.Status.error) {
+                        Log.d("filee", "ERROR!!! " + transfer.error)
+                        break
+                    } else {
+                        Log.d("files", transfer.status.toString())
+                        Log.d("filep", transfer.progress.toString())
+                    }
+                    sleep(1)
+                }
+            }.start()
+
+
+
+        } catch (e: Exception) {
+            Log.d("filerror", e.printStackTrace().toString())
+        }
     }
 
     private fun getServiceName(): DomainBareJid? {

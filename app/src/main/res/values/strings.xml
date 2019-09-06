@@ -22,4 +22,8 @@
     <string name="create_group">Create Group</string>
     <string name="group_name">Group Name</string>
     <string name="create">Create</string>
+    <string name="camera">Camera</string>
+    <string name="gallery">Gallery</string>
+    <string name="document">Document</string>
+    <string name="all_permissions_are_not_granted">All Permissions are not granted</string>
 </resources>

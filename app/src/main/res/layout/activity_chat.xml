@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/layout_chat"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.ChatActivity">
@@ -11,23 +12,23 @@
         android:id="@+id/toolbar_chat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:background="@color/colorPrimary"
         android:elevation="@dimen/_1sdp"
         app:contentInsetStartWithNavigation="0dp"
-        android:layout_alignParentTop="true"
         app:navigationIcon="@drawable/ic_back"
+        app:subtitleTextAppearance="@style/toolbar_theme_subtitle"
         app:title="@string/app_name"
         app:titleTextAppearance="@style/toolbar_theme"
-        app:subtitleTextAppearance="@style/toolbar_theme_subtitle"
         app:titleTextColor="@android:color/white" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:paddingBottom="@dimen/_2sdp"
         android:id="@+id/rv_chat_messages"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/layout_send_messages"
-        android:layout_below="@id/toolbar_chat" />
+        android:layout_below="@id/toolbar_chat"
+        android:paddingBottom="@dimen/_2sdp" />
 
     <LinearLayout
         android:id="@+id/layout_send_messages"
@@ -35,34 +36,143 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true">
 
-        <EditText
-            android:id="@+id/et_message"
+        <FrameLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="@dimen/_5sdp"
             android:layout_weight="1"
-            android:background="@drawable/bg_message_box"
-            android:elevation="@dimen/_1sdp"
-            android:hint="@string/type_a_message"
-            android:maxLines="5"
-            android:paddingStart="@dimen/_10sdp"
-            android:paddingTop="@dimen/_6sdp"
-            android:paddingEnd="@dimen/_5sdp"
-            android:paddingBottom="@dimen/_6sdp"
-            android:textSize="@dimen/_14sdp" />
+            android:padding="@dimen/_4sdp">
 
-        <ImageView
+            <hani.momanii.supernova_emoji_library.Helper.EmojiconEditText
+                android:id="@+id/et_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_margin="@dimen/_2sdp"
+                android:background="@drawable/bg_message_box"
+                android:elevation="@dimen/_1sdp"
+                android:hint="@string/type_a_message"
+                android:maxLines="5"
+                android:paddingStart="@dimen/_30sdp"
+                android:paddingTop="@dimen/_6sdp"
+                android:paddingEnd="@dimen/_30sdp"
+                android:paddingBottom="@dimen/_6sdp"
+                android:textSize="@dimen/_16sdp" />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_emoji"
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:layout_gravity="start|center"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:elevation="@dimen/_2sdp"
+                android:src="@drawable/ic_smile_emoji" />
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/iv_attach"
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:layout_gravity="end|center"
+                android:layout_marginEnd="@dimen/_12sdp"
+                android:elevation="@dimen/_2sdp"
+                android:src="@drawable/ic_attach" />
+        </FrameLayout>
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/bt_send"
             android:layout_width="@dimen/_35sdp"
             android:layout_height="@dimen/_35sdp"
             android:layout_gravity="center"
             android:layout_margin="@dimen/_3sdp"
-            android:background="@drawable/bg_circle_send"
+            android:backgroundTint="@color/colorPrimary"
             android:elevation="@dimen/_1sdp"
+            android:insetLeft="0dp"
+            android:insetTop="0dp"
+            android:insetRight="0dp"
+            android:insetBottom="0dp"
             android:padding="@dimen/_9sdp"
-            android:src="@drawable/ic_send"
-            app:cornerRadius="@dimen/_30sdp" />
+            android:visibility="gone"
+            app:cornerRadius="@dimen/_30sdp"
+            app:icon="@drawable/ic_send" />
     </LinearLayout>
 
+    <LinearLayout
+        android:visibility="gone"
+        android:id="@+id/layout_attachments_type"
+        android:layout_above="@id/layout_send_messages"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginStart="@dimen/_10sdp"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_3sdp"
+        android:elevation="@dimen/_1sdp"
+        android:background="@drawable/bg_message_box">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_20sdp"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/_36sdp"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_camera"/>
+
+            <TextView
+                android:layout_margin="@dimen/_2sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/camera"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_10sdp"
+                android:layout_gravity="center"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/layout_gallery"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_20sdp"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/_36sdp"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_gallery"/>
+
+            <TextView
+                android:layout_margin="@dimen/_2sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/gallery"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_10sdp"
+                android:layout_gravity="center"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_20sdp"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="@dimen/_36sdp"
+                android:layout_height="@dimen/_36sdp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_document"/>
+
+            <TextView
+                android:layout_margin="@dimen/_2sdp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/document"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_10sdp"
+                android:layout_gravity="center"/>
+        </LinearLayout>
+
+    </LinearLayout>
 </RelativeLayout>
