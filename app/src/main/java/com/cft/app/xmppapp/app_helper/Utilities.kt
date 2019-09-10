@@ -6,7 +6,6 @@ import org.jivesoftware.smack.packet.Presence
 import org.jxmpp.jid.Jid
 import java.text.SimpleDateFormat
 import java.util.*
-import android.R
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Environment
@@ -20,14 +19,18 @@ import kotlin.math.roundToInt
 
 object Utilities {
 
+    // get name from jid
     fun getNameFromJid(jid: Jid): String {
-
         val tempJid = jid.asBareJid().toString()
         return (tempJid[0] - 32).toString() + tempJid.substring(1, tempJid.indexOf("@"))
     }
 
+    // get name from string
     fun getNameFromJid(jid: String) = (jid[0] - 32).toString() + jid.substring(1, jid.indexOf("@"))
 
+    /**
+     * @jid send subscribed request to passed jid
+     */
     fun sendStanzaForSubscribed(jid: Jid) {
 
         val subscribedTo = Presence(Presence.Type.subscribed)
@@ -41,6 +44,9 @@ object Utilities {
         }
     }
 
+    /**
+     * @timeInMillis find only date using time in millis
+     */
     fun findDate(timeInMillis: Long): String {
 
         val date = Date(timeInMillis)
@@ -49,6 +55,9 @@ object Utilities {
         return sdf.format(date)
     }
 
+    /**
+     * @timeInMillis find only day using time in millis
+     */
     fun findDayFromTime(timeInMillis: Long): String {
         val date = Date(timeInMillis)
         val sdf = SimpleDateFormat("EEEE", Locale.UK)
@@ -56,6 +65,9 @@ object Utilities {
         return sdf.format(date)
     }
 
+    /**
+     * @timeInMillis find only time using time in millis
+     */
     fun findTime(timeInMillis: Long): String {
         val date = Date(timeInMillis)
         val sdf = SimpleDateFormat("h:mm a", Locale.UK)
@@ -63,6 +75,9 @@ object Utilities {
         return sdf.format(date)
     }
 
+    /**
+     * @timeInMillis find only date using time in millis
+     */
     fun findDateFromTime(timeInMillis: Long): String {
         val date = Date(timeInMillis)
         val sdf = SimpleDateFormat("d/MM/yyyy", Locale.UK)
@@ -70,45 +85,49 @@ object Utilities {
         return sdf.format(date)
     }
 
+    /**
+     * @bitmap get scaled bitmap after saving it to xmpp directory
+     */
     fun getScaledBitmapPath(context: Context, bitmap: Bitmap): String {
 
         val scaledBitmap = scaleDown(bitmap)
         val file: File
         var path = ""
-        try{
+        try {
             file = makeMediaFile(context)!!
             file.createNewFile()
             path = file.absolutePath
             val bytes = ByteArrayOutputStream()
             val outputStream = FileOutputStream(file)
             outputStream.write(bytes.toByteArray())
-            scaledBitmap.compress(Bitmap.CompressFormat.JPEG,90,outputStream)
+            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 90, outputStream)
             outputStream.flush()
             outputStream.close()
             return path
-        }
-        catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
         return path
     }
 
+    // create a media file image
     private fun makeMediaFile(context: Context): File? {
         val fileName = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date()) + ".jpg"
         val path = createDirectory(context)
         val imageFile = File("$path${File.separator}$fileName")
 
-        try{
-            if(imageFile.exists())
+        try {
+            if (imageFile.exists())
                 imageFile.delete()
             imageFile.createNewFile()
             return imageFile
-        }catch (e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
         return null
     }
 
+    // scale down the real image bitmap
     private fun scaleDown(realImage: Bitmap): Bitmap {
 
         val ratio = min(1000 / realImage.width, 1000 / realImage.height)
@@ -117,20 +136,17 @@ object Utilities {
         return Bitmap.createScaledBitmap(realImage, width, height, true)
     }
 
+    //  create file directory for saving compressed images
     private fun createDirectory(context: Context): File {
         val state = Environment.getExternalStorageState()
         val directoryName = AppConstants.APP_NAME
         val folder: File
-        if (state.contains(Environment.MEDIA_MOUNTED)) {
-            folder =
-                File("${Environment.getExternalStorageDirectory()}${File.separator}${directoryName}")
+        folder = if (state.contains(Environment.MEDIA_MOUNTED)) {
+            File("${Environment.getExternalStorageDirectory()}${File.separator}${directoryName}")
         } else {
-            folder = File("${context.filesDir}${File.separator}${directoryName}");
+            File("${context.filesDir}${File.separator}${directoryName}")
         }
 
-        if (folder.mkdir())
-            return folder
-        else
-            return folder
+        return if (folder.mkdir()) folder else folder
     }
 }

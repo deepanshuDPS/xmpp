@@ -20,7 +20,9 @@ import android.graphics.Point
 import com.cft.app.xmppapp.listener.OnFileSelectedListener
 import com.cft.app.xmppapp.listener.OnMyClickListener
 
-
+/**
+ * activity for choosing images and video from the list of files in external directory
+ */
 class GalleryActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,12 +34,12 @@ class GalleryActivity : BaseActivity() {
                 arrayOf(READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE),
                 REQUEST_CODE_READ_WRITE_PERMISSION
             )
-        else {
+        else
             getAllMediaData()
-        }
 
     }
 
+    // get All media data from external and set it to recycler view
     @SuppressLint("Recycle")
     private fun getAllMediaData() {
         val list = ArrayList<GalleryModel>()
@@ -110,6 +112,7 @@ class GalleryActivity : BaseActivity() {
 
     }
 
+    // checking for needed permissions is given or not
     private fun checkForReadAndWritePermission() = ActivityCompat.checkSelfPermission(
         this,
         READ_EXTERNAL_STORAGE

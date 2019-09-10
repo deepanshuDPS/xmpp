@@ -2,8 +2,6 @@ package com.cft.app.xmppapp.fragment
 
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -16,7 +14,6 @@ import com.cft.app.xmppapp.activity.ChatActivity
 import com.cft.app.xmppapp.adapter.FriendsListAdapter
 import com.cft.app.xmppapp.listener.OnAllClickListener
 import com.cft.app.xmppapp.listener.OnFriendSelectionListener
-import com.cft.app.xmppapp.listener.OnMyClickListener
 import com.cft.app.xmppapp.listener.RosterChangeListener
 import com.cft.app.xmppapp.model.FriendsDetailsModel
 import com.cft.app.xmppapp.xmpp_connections.ManageConnections
@@ -28,6 +25,7 @@ class FriendsListFragment : Fragment() {
 
     private var baseActivity: BaseActivity? = null
 
+    // companion object for handling friends selections from home activity and clearing list if no selection
     companion object {
 
         private var onFriendSelectionListener: OnFriendSelectionListener? = null
@@ -71,6 +69,7 @@ class FriendsListFragment : Fragment() {
         onRosterChangeListener.onRosterChange()
     }
 
+    // if the roster is updated,added or removed then the friends list updated with current status
     private val onRosterChangeListener = object : RosterChangeListener {
 
         override fun onRosterChange() {
@@ -90,6 +89,7 @@ class FriendsListFragment : Fragment() {
         }
     }
 
+    // listener for different functions of the item of friends list
     private val onAllClickListener = object : OnAllClickListener {
 
         private fun sendSelectedList() {

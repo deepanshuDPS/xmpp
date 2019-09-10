@@ -42,7 +42,7 @@ class FriendsListAdapter(
                 )
             )
 
-        if (details.type == "both")
+        if (position % 2 == 0)
             holder.cv_background.setImageResource(R.color.color_to)
         else
             holder.cv_background.setImageResource(R.color.color_from)
@@ -87,8 +87,5 @@ class FriendsListAdapter(
 
     inner class ViewHolder(override val containerView: View) :
         RecyclerView.ViewHolder(containerView),
-        LayoutContainer {
-
-
-    }
+        LayoutContainer
 }

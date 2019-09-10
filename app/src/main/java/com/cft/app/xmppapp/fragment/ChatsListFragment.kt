@@ -2,7 +2,6 @@ package com.cft.app.xmppapp.fragment
 
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -26,12 +25,11 @@ import org.jxmpp.jid.Jid
 class ChatsListFragment : Fragment() {
 
 
-
+    // listener for incoming messages to set the latest at first on chat list
     private var onIncomingMessageListener = object : IncomingMessageListener {
         override fun onIncomingMessage(message: Message, from: Jid) {
 
             baseActivity?.runOnUiThread {
-                          //displayToast("${message.body} from ${Utilities.getNameFromJid(from)}")
                 chatListAdapter?.shiftToFirst(Utilities.getNameFromJid(from),from.toString(),message.body)
             }
         }
@@ -66,6 +64,8 @@ class ChatsListFragment : Fragment() {
         createChatListFromRoster()
     }
 
+
+    // creating chat list from roster if any of roster entry has atleast 1 massage
     private fun createChatListFromRoster() {
         val mamManager = MamManager.getInstanceFor(ManageConnections.xMPPConnection)
         val entries = ManageConnections.roster?.entries!!
@@ -97,7 +97,7 @@ class ChatsListFragment : Fragment() {
         chatListAdapter?.notifyDataSetChanged()
     }
 
-
+    // on click to chat activity of particular user
     private val onMyClickListener = object : OnMyClickListener {
         override fun onMyClick(position: Int) {
             val bundle = Bundle()
@@ -106,6 +106,7 @@ class ChatsListFragment : Fragment() {
         }
     }
 
+    // on destroy remove the incoming listener
     override fun onDestroy() {
         super.onDestroy()
         ManageConnections.onIncomingMessageListeners.remove("home_activity")

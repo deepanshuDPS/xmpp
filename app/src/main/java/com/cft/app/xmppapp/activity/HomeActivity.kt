@@ -1,6 +1,5 @@
 package com.cft.app.xmppapp.activity
 
-import android.annotation.SuppressLint
 import android.app.Dialog
 import android.os.Bundle
 import android.util.Log
@@ -26,16 +25,13 @@ import com.cft.app.xmppapp.xmpp_connections.ManageConnections
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.textfield.TextInputLayout
 import kotlinx.android.synthetic.main.activity_home.*
-import org.jivesoftware.smack.roster.RosterEntry
 import org.jxmpp.jid.Jid
 import org.jxmpp.jid.impl.JidCreate
 
-
+/**
+ * activity for managing chats and friends for a xmpp user
+ */
 class HomeActivity : BaseActivity() {
-
-    /*
-    <delay xmlns='urn:xmpp:delay' stamp='2019-08-28T06:48:53.808+00:00' from='192.168.1.12'>Offline storage</delay>
-    */
 
     var actionMode: ActionMode? = null
 
@@ -46,8 +42,9 @@ class HomeActivity : BaseActivity() {
         val tabList = ArrayList<String>()
         tabList.add("Chats")
         tabList.add("Friends")
-        view_pager.adapter =
-            ChatsViewPagerAdapter(supportFragmentManager, tabList, onFriendSelectionListener)
+
+        //setup chats and friends tabs
+        view_pager.adapter = ChatsViewPagerAdapter(supportFragmentManager, tabList, onFriendSelectionListener)
 
         tab_layout_chat.setupWithViewPager(view_pager)
 
@@ -66,8 +63,8 @@ class HomeActivity : BaseActivity() {
 
         })
 
+        // fab button to add friend using its username without jid attached
         fab_add_friend.setOnClickListener {
-
             showSendRequestDialog()
         }
 
@@ -75,7 +72,7 @@ class HomeActivity : BaseActivity() {
 
         toolbar_home.setOnMenuItemClickListener {
 
-            if (it.itemId == R.id.log_out) {
+            if (it.itemId == R.id.log_out) {        // on logout erase previous login data and switch to login
                 logOut()
                 finish()
                 switchActivity(LogInActivity::class.java)
@@ -90,6 +87,9 @@ class HomeActivity : BaseActivity() {
         return true
     }
 
+    /**
+     * dialog for sending request to a user
+     */
     private fun showSendRequestDialog() {
 
         val dialog = Dialog(this@HomeActivity)
@@ -101,21 +101,24 @@ class HomeActivity : BaseActivity() {
             val nameLayout = dialog.findViewById<TextInputLayout>(R.id.ti_name)
             val name = getTextFromEditText(dialog.findViewById(R.id.et_name))
             if (name.isNotEmpty()) {
-                sendRequestToUser(name)
+                val jid = JidCreate.bareFrom("$name@${AppConstants.JID}")   // here we attached with username
+                ManageConnections.roster?.sendSubscriptionRequest(jid)          // sending subscribe request
                 nameLayout.isErrorEnabled = false
                 dialog.dismiss()
-            } else nameLayout.error = "Please Enter Name"
+            } else nameLayout.error = getString(R.string.please_enter_name)
         }
         dialog.findViewById<Button>(R.id.bt_cancel).setOnClickListener { dialog.dismiss() }
 
         dialog.show()
     }
 
+    // if friend request arrives then this listener handles that
     private val friendRequestListener = object : FriendRequestListener {
-        override fun askForRequest(from: Jid, entries: Set<RosterEntry>?) {
+        override fun askForRequest(from: Jid) {
             var flag = true
 
-            // checking for request accepting automatically
+            // subscribed for request automatically when already as "to" status in roster
+            // "to" means this user already subscribe "from" user
             val entry = ManageConnections.roster?.getEntry(from.asBareJid())
             if (entry?.jid == from && entry.type.name == "to") {
                 flag = false
@@ -151,13 +154,7 @@ class HomeActivity : BaseActivity() {
 
     }
 
-    private fun sendRequestToUser(name: String) {
-
-        val jid = JidCreate.bareFrom("$name@${AppConstants.JID}")
-        ManageConnections.roster?.sendSubscriptionRequest(jid)
-
-    }
-
+    // action mode for new group creation but not working now
     inner class ActionBarCallback : ActionMode.Callback {
         override fun onActionItemClicked(mode: ActionMode?, item: MenuItem): Boolean {
 
@@ -194,6 +191,7 @@ class HomeActivity : BaseActivity() {
 
     }
 
+    // clear action mode if no need for selected friends group creation
     private fun clearActionMode() {
         actionMode?.finish()
         actionMode = null
@@ -208,6 +206,7 @@ class HomeActivity : BaseActivity() {
         )
     }
 
+    // create group dialog to create new group with specified users
     private fun createGroupDialog() {
         val dialog = Dialog(this@HomeActivity)
         dialog.setContentView(R.layout.dialog_create_group)
@@ -245,9 +244,9 @@ class HomeActivity : BaseActivity() {
         dialog.show()
     }
 
+    // this listener is called when the users selection occurs in chat list
     private val onFriendSelectionListener = object : OnFriendSelectionListener {
 
-        @SuppressLint("RestrictedApi")
         override fun onFriendsSelected(friendsJidList: ArrayList<String>) {
 
             AppPreferences.saveSelectedFriends(baseContext, friendsJidList)

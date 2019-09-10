@@ -13,13 +13,15 @@ import kotlinx.android.extensions.LayoutContainer
 import kotlinx.android.synthetic.main.item_chat_person.tv_name
 import kotlinx.android.synthetic.main.item_group_user.*
 
-class SelectedUsersAdapter(private val context: Context,
-                           private val list:ArrayList<String>,
-                           private val onMyClickListener: OnMyClickListener): RecyclerView.Adapter<SelectedUsersAdapter.ViewHolder>() {
+class SelectedUsersAdapter(
+    private val context: Context,
+    private val list: ArrayList<String>,
+    private val onMyClickListener: OnMyClickListener
+) : RecyclerView.Adapter<SelectedUsersAdapter.ViewHolder>() {
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-
-        val view = LayoutInflater.from(context).inflate(R.layout.item_group_user,parent,false)
+        val view = LayoutInflater.from(context).inflate(R.layout.item_group_user, parent, false)
         return ViewHolder(view)
     }
 
@@ -29,18 +31,18 @@ class SelectedUsersAdapter(private val context: Context,
         val jid = list[position]
 
         holder.tv_name.text = Utilities.getNameFromJid(jid)
-        holder.iv_close.setOnClickListener{
+        holder.iv_close.setOnClickListener {
             list.removeAt(position)
-            if(list.size == 0) {
-                AppPreferences.saveSelectedFriends(context,null)
+            if (list.size == 0) {
+                AppPreferences.saveSelectedFriends(context, null)
                 onMyClickListener.onMyClick(position)
-            }
-            else
-                AppPreferences.saveSelectedFriends(context,list)
+            } else
+                AppPreferences.saveSelectedFriends(context, list)
             notifyDataSetChanged()
 
         }
     }
 
-    class ViewHolder(override val containerView: View) :RecyclerView.ViewHolder(containerView),LayoutContainer
+    class ViewHolder(override val containerView: View) : RecyclerView.ViewHolder(containerView),
+        LayoutContainer
 }

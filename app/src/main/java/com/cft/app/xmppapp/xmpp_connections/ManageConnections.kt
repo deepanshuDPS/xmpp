@@ -21,6 +21,8 @@ import org.jivesoftware.smackx.filetransfer.FileTransfer
 import java.io.File
 import org.jivesoftware.smackx.filetransfer.FileTransferManager
 import java.lang.Thread.sleep
+import java.sql.Connection
+import java.sql.DriverManager
 
 
 object ManageConnections {
@@ -36,6 +38,7 @@ object ManageConnections {
     var onRosterChangeListener: RosterChangeListener? = null
     var onIncomingMessageListeners = LinkedHashMap<String, IncomingMessageListener>()
     var onPresenceChangeListener: PresenceChangeListener? = null
+    var databaseConnection: Connection? =null
 
     fun setConnection(
         username: String,
@@ -68,6 +71,7 @@ object ManageConnections {
                         setConnectionListener()
                         setRosterAndMucManager()
                         setChatMessenger()
+                        setDatabaseConnection()
                     }
                 } catch (e: Exception) {
                     isConnected = false
@@ -78,6 +82,16 @@ object ManageConnections {
 
         connectionThread.start()
 
+    }
+
+    private fun setDatabaseConnection() {
+
+        val databaseConnectionThread = Thread{
+            Class.forName("com.mysql.jdbc.Driver")
+            databaseConnection = DriverManager.getConnection("url","user","password")
+            Log.d("database","Connected")
+        }
+        databaseConnectionThread.start()
     }
 
     private fun setConnectionListener() {
@@ -133,7 +147,7 @@ object ManageConnections {
 
 
         roster?.addSubscribeListener { from, _ ->
-            friendRequestListener?.askForRequest(from, roster?.entries)
+            friendRequestListener?.askForRequest(from)
             Log.d("request:", "accepted")
             null
         }

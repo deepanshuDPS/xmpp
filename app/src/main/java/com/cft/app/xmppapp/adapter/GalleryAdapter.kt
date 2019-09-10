@@ -31,7 +31,9 @@ class GalleryAdapter(private var context: Context, private var mediaList:ArrayLi
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.layout_content_uri.layoutParams.height = width
         holder.layout_content_uri.layoutParams.width = width
+
         val mediaPath = mediaList[position].mediaPath
+
         if(mediaList[position].mimeType.contains("image")){
             val bmOptions = BitmapFactory.Options()
             var bitmap = BitmapFactory.decodeFile(mediaList[position].mediaPath, bmOptions)
@@ -44,6 +46,7 @@ class GalleryAdapter(private var context: Context, private var mediaList:ArrayLi
             holder.layout_content_uri.background = BitmapDrawable(context.resources, bitmap)
             holder.iv_mime_type.setBackgroundResource(R.drawable.ic_videocam)
         }
+
         holder.layout_content_uri.setOnClickListener {
             val file = File(mediaPath)
             val lengthInMB = file.length() / (1024f * 1024f)

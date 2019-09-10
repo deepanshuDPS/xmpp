@@ -28,7 +28,9 @@ import org.jxmpp.jid.Jid
 import org.jxmpp.jid.impl.JidCreate
 import java.io.File
 
-
+/**
+ * activity for implementation of chatting between two users
+ */
 class ChatActivity : BaseActivity() {
 
     private var mamManager: MamManager? = null
@@ -40,6 +42,7 @@ class ChatActivity : BaseActivity() {
     private var allMessagesFetched = false
     private var eMoJiIconsActions:EmojIconActions?=null
 
+    // handling incoming message and set it to chat list
     private var onChatIncomingMessageListener = object : IncomingMessageListener {
         override fun onIncomingMessage(message: Message, from: Jid) {
             runOnUiThread {
@@ -56,6 +59,7 @@ class ChatActivity : BaseActivity() {
 
     }
 
+    // handling presence change of current chating user and update status
     private var onPresenceChange = object : PresenceChangeListener {
         override fun onPresenceChange(presence: Presence) {
             runOnUiThread {
@@ -84,6 +88,8 @@ class ChatActivity : BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
+
+        // setting emoji keyboard with chatting edit text
         eMoJiIconsActions = EmojIconActions(this,layout_chat,et_message,iv_emoji,"#2A9900","#E1FFC5","#F6FFF6")
         eMoJiIconsActions?.setIconsIds(R.drawable.ic_keyboard,R.drawable.ic_smile_emoji)
         eMoJiIconsActions?.ShowEmojIcon()
@@ -99,7 +105,10 @@ class ChatActivity : BaseActivity() {
             startActivityForResult(Intent(this@ChatActivity,GalleryActivity::class.java),REQUEST_CODE_GALLERY)
             layout_attachments_type.visibility = View.GONE
         }
+
         et_message.setEmojiconSize(resources.getDimension(R.dimen._16sdp).toInt())
+        et_message.setUseSystemDefault(false)
+        // if there is any text in chatting edit text then only the send button is visible
         et_message.addTextChangedListener(object :TextWatcher{
             override fun afterTextChanged(s: Editable?) {
                 if(et_message.text.toString().trim().isNotEmpty())
@@ -117,7 +126,7 @@ class ChatActivity : BaseActivity() {
             }
 
         })
-        et_message.setUseSystemDefault(true)
+
         mamManager = MamManager.getInstanceFor(ManageConnections.xMPPConnection)
         jidString = intent.extras?.getString("jid")
         jid = JidCreate.bareFrom(jidString)
