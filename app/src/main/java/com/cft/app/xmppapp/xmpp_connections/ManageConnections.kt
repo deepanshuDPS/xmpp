@@ -28,7 +28,7 @@ import java.sql.DriverManager
 object ManageConnections {
 
     private var fileTransferManager: FileTransferManager?=null
-    var mucManager: MultiUserChatManager? = null
+    private var mucManager: MultiUserChatManager? = null
     var boshConfiguration: BOSHConfiguration? = null
     var xMPPConnection: XMPPBOSHConnection? = null
     var isConnected = false
@@ -86,12 +86,12 @@ object ManageConnections {
 
     private fun setDatabaseConnection() {
 
-        val databaseConnectionThread = Thread{
+       /* val databaseConnectionThread = Thread{
             Class.forName("com.mysql.jdbc.Driver")
-            databaseConnection = DriverManager.getConnection("url","user","password")
+            databaseConnection = DriverManager.getConnection("jdbc:mysql://192.168.1.12:3306/ejabberd","root","Password")
             Log.d("database","Connected")
         }
-        databaseConnectionThread.start()
+        databaseConnectionThread.start()*/
     }
 
     private fun setConnectionListener() {
@@ -216,7 +216,7 @@ object ManageConnections {
 
         try {
             //JidCreate.entityFullFrom(JidCreate.entityBareFrom(jid))
-            val transfer = manager.createOutgoingFileTransfer(JidCreate.entityFullFrom(jid + "/Smack"))
+            val transfer = manager.createOutgoingFileTransfer(JidCreate.entityFullFrom("$jid/Smack"))
 
             Thread{
                 transfer.sendFile(file, "")

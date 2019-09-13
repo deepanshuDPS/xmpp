@@ -6,28 +6,38 @@ import com.cft.app.xmppapp.app_helper.AppPreferences
 import com.cft.app.xmppapp.listener.XMPPConnectionListener
 import com.cft.app.xmppapp.xmpp_connections.ManageConnections
 import com.cft.app.xmppapp.R
+import com.cft.app.xmppapp.app_helper.NetworkUtil
+import com.cft.app.xmppapp.app_helper.Utilities
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.layout_progress_bar.*
+
 
 /**
  * activity for Login to XMPP and if already login then redirect to Home
  */
 class LogInActivity : BaseActivity() {
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        // if already login then set connection automatically
-        if(AppPreferences.getLogInStatus(this))
-            setConnectionToUser(AppPreferences.getUsername(this),AppPreferences.getPassword(this))
-        else
-            layout_progress_bar.visibility = View.GONE
+        if(NetworkUtil.getConnectivityStatus(this)){
+            // if already login then set connection automatically
+            if(AppPreferences.getLogInStatus(this))
+                setConnectionToUser(AppPreferences.getUsername(this),AppPreferences.getPassword(this))
+            else
+                layout_progress_bar.visibility = View.GONE
 
-        bt_login.setOnClickListener {
-            if(isValidToLogin())
-                setConnectionToUser(getTextFromEditText(et_username),getTextFromEditText(et_password))
+            bt_login.setOnClickListener {
+                if(isValidToLogin())
+                    setConnectionToUser(getTextFromEditText(et_username),getTextFromEditText(et_password))
+            }
         }
+        else{
+            displayToast("No Connection")
+        }
+
     }
 
     // function to check validation
